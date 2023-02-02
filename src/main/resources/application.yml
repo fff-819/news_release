@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:mysql:///news_release?useUnicode=true&characterEncoding=utf8
     username: root
-    password: "@Cwt20020701"
+    password: "your password"
     driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
     serialization:
