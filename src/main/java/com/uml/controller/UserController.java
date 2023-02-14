@@ -121,7 +121,7 @@ public class UserController {
      */
     @ApiOperation("发表新闻")
     @PostMapping("/news")
-    /*public Result updateNews(@RequestParam Long userId,@RequestParam Integer categoryId,@RequestParam String title,@RequestParam String context){
+    public Result updateNews(@RequestParam Long userId,@RequestParam Integer categoryId,@RequestParam String title,@RequestParam String context){
         System.out.println("发表新闻"+context);
 
         Result result = new Result();
@@ -133,8 +133,8 @@ public class UserController {
         }
         result.setFlag(true);
         return result;
-    }*/
-    public Result updateNews(@RequestBody News news){
+    }
+    /*public Result updateNews(@RequestBody News news){
         System.out.println("发表新闻"+news);
         Result result = new Result();
         boolean flag = newsService.save(news);
@@ -144,7 +144,7 @@ public class UserController {
         }
         result.setFlag(true);
         return result;
-    }
+    }*/
     /**
      * 发布评论,参数：新闻id，用户id，父评论id，评论内容
      */
@@ -207,6 +207,8 @@ public class UserController {
             comment.setLikes(comment.getLikes()+1);
             likeCommentService.insertCommentLikes(new LikeComment(comment.getId(),userId));
         }
+        //这里要设置点赞标志默认为false
+        comment.setFlag(false);
         result.setFlag(commentService.updateById(comment));
         return result;
     }

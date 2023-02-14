@@ -6,6 +6,7 @@ import com.uml.service.AdministratorService;
 import com.uml.service.CommentService;
 import com.uml.service.NewsService;
 import com.uml.service.UserService;
+import org.omg.CORBA.SystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,5 +45,16 @@ public class testController {
     public String testFile(@RequestBody MultipartFile file){
         System.out.println(file);
         return null;
+    }
+    /**
+     * 全局异常处理测试
+     */
+    @GetMapping("/error")
+    public Result testError(@RequestParam Integer age) throws Exception {
+        Result result = new Result();
+        if(age<0){
+            throw new Exception("年龄错误！！");
+        }
+        return result;
     }
 }

@@ -63,7 +63,6 @@ public class AdministratorController {
     public Result Register(@RequestBody Administrator administrator){
         System.out.println("用户注册");
         System.out.println(administrator);
-
         Result result = new Result(true);
         if(!administratorService.save(administrator)) {
             result.setFlag(false);

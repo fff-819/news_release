@@ -21,7 +21,7 @@ public class MyMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(userloginInterceptor).addPathPatterns("/users/*");
-        registry.addInterceptor(administratorLoginInterceptor).addPathPatterns("/administrator/*");
+        registry.addInterceptor(administratorLoginInterceptor).addPathPatterns("/administrators/*");
         WebMvcConfigurer.super.addInterceptors(registry);
     }
 }
