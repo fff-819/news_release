@@ -106,6 +106,7 @@ public class UserController {
         System.out.println("newsId:"+newsId);
 
         Result result = new Result(false);
+
         viewNewsService.insertViewNews(new ViewNews(userId, newsId));
         News news = newsService.getById(newsId);
         if (news==null){
