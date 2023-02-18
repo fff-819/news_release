@@ -20,14 +20,7 @@ public interface NewsService extends IService<News> {
      * 获取待审核新闻列表
      */
     IPage getCheckNews(Integer page);
-    /**
-     * 将新闻按查看次数降序排序
-     */
-    void descendSortNewsByViewTimes(List<News> newsList);
-    /**
-     * 将新闻按查看次数升序排序
-     */
-    void ascendSortNewsByViewTimes(List<News> newsList);
+
     /**
      * 按新闻类别和页数获取新闻信息
      */
@@ -41,4 +34,8 @@ public interface NewsService extends IService<News> {
      */
     @Async
     News mulGetNewsById(Long newsId);
+    /**
+     * 根据标题搜索新闻
+     */
+    List<News> searchNewsByTitle(String title);
 }

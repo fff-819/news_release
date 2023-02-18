@@ -38,15 +38,6 @@ public class NewsServiceImp extends ServiceImpl<NewsMapper,News> implements News
         return pages;
     }
 
-    @Override
-    public void descendSortNewsByViewTimes(List<News> newsList) {
-
-    }
-
-    @Override
-    public void ascendSortNewsByViewTimes(List<News> newsList) {
-
-    }
 
     @Override
     public IPage getNewsByCategoryAndPage(String CategoryName, Integer page) {
@@ -81,6 +72,14 @@ public class NewsServiceImp extends ServiceImpl<NewsMapper,News> implements News
     @Override
     public News mulGetNewsById(Long newsId) {
         return getById(newsId);
+    }
+
+    @Override
+    public List<News> searchNewsByTitle(String title) {
+        QueryWrapper wrapper = new QueryWrapper<>();
+        wrapper.like("title",title);
+        List list = newsMapper.selectList(wrapper);
+        return list;
     }
 
 

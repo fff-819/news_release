@@ -33,6 +33,8 @@ public class UserController {
     LikeCommentService likeCommentService;
     @Autowired
     ViewNewsService viewNewsService;
+    @Autowired
+    UserCollectionService userCollectionService;
     /**
      * 用户登录,session的默认过期时间为30min
      */
@@ -74,6 +76,40 @@ public class UserController {
         return result;
     }
     /**
+     * 用户收藏新闻
+     */
+    @ApiOperation("用户收藏新闻：收藏过的话会自动取消，没收藏过的收藏")
+    @PostMapping("collection/{userId}/{newsId}")
+    public Result collectNews(@PathVariable Long userId,@PathVariable Long newsId){
+        System.out.println("用户收藏新闻");
+        System.out.println(userId+newsId);
+        Result result = new Result(true);
+        boolean flag;
+        Boolean f = userCollectionService.selectCollectByUserIdAndNewsId(userId, newsId);
+        if (!f){
+            flag = userCollectionService.save(new UserCollection(userId, newsId));
+        }else{
+            flag = userCollectionService.notCollect(userId,newsId);
+        }
+        result.setFlag(flag);
+        return result;
+    }
+    /**
+     * 搜索新闻
+     */
+    @ApiOperation("搜索新闻")
+    @GetMapping("/search/{title}/{userId}")
+    public Result searchNews(@PathVariable String title,@PathVariable Long userId){
+        System.out.println("搜索新闻");
+        System.out.println("title："+title+",userid:"+userId);
+        Result result = new Result();
+        List<News> newsList = newsService.searchNewsByTitle(title);
+        System.out.println(newsList);
+        result.setFlag(true);
+        result.setData(newsList);
+        return result;
+    }
+    /**
      * 用户按分类浏览信息,同时附上分页信息,这里直接设置了页面内包含的新闻条数
      */
     @ApiOperation("用户按分类浏览信息,同时附上分页信息,这里直接设置了页面内包含的新闻条数")
@@ -104,9 +140,7 @@ public class UserController {
         System.out.println("查看某个新闻详情");
         System.out.println("用户id："+userId);
         System.out.println("newsId:"+newsId);
-
         Result result = new Result(false);
-
         viewNewsService.insertViewNews(new ViewNews(userId, newsId));
         News news = newsService.getById(newsId);
         if (news==null){
@@ -122,7 +156,7 @@ public class UserController {
      */
     @ApiOperation("发表新闻")
     @PostMapping("/news")
-    public Result updateNews(@RequestParam Long userId,@RequestParam Integer categoryId,@RequestParam String title,@RequestParam String context){
+    /*public Result updateNews(@RequestParam Long userId,@RequestParam Integer categoryId,@RequestParam String title,@RequestParam String context){
         System.out.println("发表新闻"+context);
 
         Result result = new Result();
@@ -134,8 +168,8 @@ public class UserController {
         }
         result.setFlag(true);
         return result;
-    }
-    /*public Result updateNews(@RequestBody News news){
+    }*/
+    public Result updateNews(@RequestBody News news){
         System.out.println("发表新闻"+news);
         Result result = new Result();
         boolean flag = newsService.save(news);
@@ -145,7 +179,7 @@ public class UserController {
         }
         result.setFlag(true);
         return result;
-    }*/
+    }
     /**
      * 发布评论,参数：新闻id，用户id，父评论id，评论内容
      */
@@ -215,13 +249,13 @@ public class UserController {
     }
 
     /**
-     * 用户个人中心模块
+     * 用户个人中心模块:personal
      */
     /**
      * 查看个人信息
      */
     @ApiOperation("查看个人信息")
-    @GetMapping("/{userId}")
+    @GetMapping("/personal/{userId}")
     public Result viewPersonal(@PathVariable Long userId){
         System.out.println("userId:"+userId);
         System.out.println("查看个人信息");
@@ -239,7 +273,7 @@ public class UserController {
      * 修改个人信息
      */
     @ApiOperation("修改个人信息")
-    @PutMapping
+    @PutMapping("/personal")
     public Result modifyPersonal(@RequestBody User user){
         System.out.println("user:"+user);
         System.out.println("修改个人信息");
@@ -256,7 +290,7 @@ public class UserController {
      * 查看浏览过的文章
      */
     @ApiOperation("查看浏览过的文章")
-    @GetMapping("/news/personal/{userId}}")
+    @GetMapping("/personal/news/{userId}}")
     public Result viewBrowsedNews(@PathVariable Long userId){
         System.out.println("userId:"+userId);
         System.out.println("查看浏览过的文章");
@@ -279,7 +313,7 @@ public class UserController {
      * 查看点赞过的评论，用户在个人中心可以查看。
      */
     @ApiOperation("查看点赞过的评论")
-    @GetMapping("/comments/personal/{userId}")
+    @GetMapping("/personal/comments/{userId}")
     public Result viewLikedComment(@PathVariable Long userId){
         System.out.println("userId:"+userId);
         System.out.println("查看点赞过的评论");
@@ -294,6 +328,21 @@ public class UserController {
         }
         result.setFlag(true);
         result.setData(commentList);
+        return result;
+    }
+    /**
+     * 获取用户收藏的新闻
+     */
+    @ApiOperation("获取用户收藏的新闻")
+    @GetMapping("/personal/collection/{userId}")
+    public Result getCollection(@PathVariable Long userId){
+        System.out.println("userId:"+userId);
+        System.out.println("获取用户收藏的新闻");
+        Result result = new Result();
+        List<Long> newsIdList = userCollectionService.getNewsIdListByUserId(userId);
+        List<News> newsList = newsService.getNewsByNewsIdList(newsIdList);
+        result.setFlag(true);
+        result.setData(newsList);
         return result;
     }
 }
