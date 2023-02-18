@@ -1,3 +1,5 @@
+web:
+  upload-path: D:\code\Course\新闻发布系统\images
 server:
   port: 8080
   servlet:
@@ -14,6 +16,9 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  web:
+    resources:
+      static-locations: file:${web.upload-path},classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
 mybatis-plus:
   mapper-locations: mappers/*.xml
   type-aliases-package: com.uml.pojo

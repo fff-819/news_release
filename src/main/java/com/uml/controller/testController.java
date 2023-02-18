@@ -8,9 +8,12 @@ import com.uml.service.NewsService;
 import com.uml.service.UserService;
 import org.omg.CORBA.SystemException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -41,6 +44,28 @@ public class testController {
      * 测试文件上传
      * @return
      */
+    @Value(("${web.upload-path}"))
+    private String uploadPath;
+
+    @PostMapping("/upload")
+    public String upload(@RequestPart("file") MultipartFile file) throws IOException {
+        String fileName = file.getOriginalFilename();  //获取文件原名
+        String visibleUri="/"+fileName;     //拼接访问图片的地址
+        String saveUri=uploadPath+"/"+fileName;        //拼接保存图片的真实地址
+        System.out.println(fileName+" "+visibleUri+" "+saveUri);
+
+        File saveFile = new File(saveUri);
+        //判断是否存在文件夹，不存在就创建，但其实可以直接手动确定创建好，这样不用每次保存都检测
+        if (!saveFile.exists()){
+            saveFile.mkdirs();
+        }
+        try {
+            file.transferTo(saveFile);  //保存文件到真实存储路径下
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return visibleUri;
+    }
     @PostMapping("/testFile")
     public String testFile(@RequestBody MultipartFile file){
         System.out.println(file);
