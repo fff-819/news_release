@@ -1,5 +1,8 @@
 package com.uml.interceptor;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.uml.utils.TokenUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,14 +16,16 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component
 public class UserLoginInterceptor implements HandlerInterceptor {
+    @Autowired
+    TokenUtil tokenUtil;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (request.getSession().getAttribute("user")!=null){
-            System.out.println("拦截器放行");
-        }else{
-            System.out.println("拦截器不放行");
-        }
-        return HandlerInterceptor.super.preHandle(request, response, handler);
+        /*String token = tokenUtil.getToken(request) ;
+        System.out.println("拦截器："+token);
+        if(token.isEmpty()){
+            throw new Exception("不存在token");
+        }*/
+        return true ;
     }
 
 }

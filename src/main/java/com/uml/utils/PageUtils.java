@@ -2,7 +2,9 @@ package com.uml.utils;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.uml.pojo.Pages;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PageUtils {
     /**
      * 分页信息返回工具

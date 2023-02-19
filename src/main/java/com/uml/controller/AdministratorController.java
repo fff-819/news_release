@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @Api(tags = "管理员功能模块接口")
 @RequestMapping("/administrators")
+@CrossOrigin
 public class AdministratorController {
     @Autowired
     AdministratorService administratorService;

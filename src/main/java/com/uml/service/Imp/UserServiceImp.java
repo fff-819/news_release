@@ -1,60 +1,59 @@
 package com.uml.service.Imp;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.uml.mapper.AdministratorMapper;
 import com.uml.mapper.UserMapper;
-import com.uml.pojo.Administrator;
-import com.uml.pojo.Comment;
-import com.uml.pojo.News;
-import com.uml.pojo.User;
+import com.uml.pojo.*;
 import com.uml.service.UserService;
+import com.uml.utils.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.sql.Wrapper;
 import java.util.List;
 @Service
 public class UserServiceImp extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    TokenUtil tokenUtil;
     @Override
     public List<User> getAllUser() {
         return userMapper.getAllUser();
     }
 
     @Override
-    public void modifyUserName(Long userId, String newUserName) {
+    public Result loginCheck(User user , HttpServletResponse response){
+        User user1 = getUserByName(user.getUserName());
+        if(user1 == null ){
+            //response.sendRedirect("/login");
+            return new Result(false,null,"用户不存在") ;
+        }
+        if(!user1.getPassword().equals(user.getPassword())){
+            return new Result(false,null,"密码输入错误");
+        }
+        String token = tokenUtil.generateToken(user1) ;
+        System.out.println("token:" + token);
+        Cookie cookie = new Cookie("token" , token) ;
+        // 设置cookie的作用域：为”/“时，以在webapp文件夹下的所有应用共享cookie
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        System.out.println("cookie:"+cookie);
+        return new Result(true,null,"用户登录成功");
 
     }
 
     @Override
-    public void modifyUserPassword(Long userId, String newPassword) {
-
+    public User getUserByName(String userName) {
+        QueryWrapper wrapper = new QueryWrapper<>();
+        wrapper.eq("user_name",userName);
+        User user = userMapper.selectOne(wrapper);
+        return user;
     }
 
-    @Override
-    public void modifyUserAge(Long userId, String newUserAge) {
 
-    }
-
-    @Override
-    public void uploadNews(News news) {
-
-    }
-
-    @Override
-    public void insertComment(Comment comment) {
-
-    }
-
-    @Override
-    public void likesComment(Long commentId) {
-
-    }
-
-    @Override
-    public List<News> getNewsByCategoryName(String categoryName) {
-
-        return null;
-    }
 }

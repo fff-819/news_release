@@ -9,7 +9,10 @@ import com.uml.utils.PageUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.sql.Date;
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.List;
  * 这里处理用户的请求
  */
 @RestController
+@CrossOrigin
 @Api(tags = "用户功能模块接口")
 @RequestMapping("/users")
 public class UserController {
@@ -40,25 +44,12 @@ public class UserController {
      */
     @ApiOperation("用户登录,session的默认过期时间为30min")
     @PostMapping("/login")
-    public Result Login(@RequestParam String account,@RequestParam String password,HttpSession session){
+    public Result Login(@RequestParam String account, @RequestParam String password, HttpServletResponse response){
         System.out.println("用户登录");
         System.out.println("account:"+account+"  password:"+password);
-
-        Result result = new Result(false);
+        Result result = null;
         User user = userService.getById(Long.valueOf(account));
-        System.out.println(user);
-        if(user==null){
-            result.setMsg("用户不存在！");
-            return result;
-        }else{
-            if(!user.getPassword().equals(password)){
-                result.setMsg("用户密码错误");
-                return result;
-            }
-            result.setFlag(true);
-            session.setAttribute("user",user);
-            session.setMaxInactiveInterval(30*60);
-        }
+        result = userService.loginCheck(user, response);
         return result;
     }
     /**
