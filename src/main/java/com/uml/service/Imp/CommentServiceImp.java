@@ -20,7 +20,8 @@ public class CommentServiceImp extends ServiceImpl<CommentMapper,Comment> implem
 
     @Override
     public List<Comment> getAllComment() {
-        return null;
+        List<Comment> allComment = commentMapper.getAllComment();
+        return allComment;
     }
 
     @Override

@@ -20,11 +20,11 @@ public class UserLoginInterceptor implements HandlerInterceptor {
     TokenUtil tokenUtil;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        /*String token = tokenUtil.getToken(request) ;
+        String token = tokenUtil.getToken(request) ;
         System.out.println("拦截器："+token);
         if(token.isEmpty()){
             throw new Exception("不存在token");
-        }*/
+        }
         return true ;
     }
 

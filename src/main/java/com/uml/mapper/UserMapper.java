@@ -27,24 +27,4 @@ public interface UserMapper extends BaseMapper<User> {
      */
     @Insert("insert into user values(${userId},#{userName},${age},#{phoneNumber},#{password},false)")
     boolean insertUser(User user);
-    /**
-     * 根据id删除用户
-     */
-    void deleteUserById(Long userId);
-    /**
-     * 根据用户id修改用户评论状态
-     */
-    void updateUserStatusById(Long userId,Integer newStatus);
-    /**
-     * 根据用户id修改用户名
-     */
-    void updateUserNameById(Long userId,String newUserName);
-    /**
-     * 根据用户id修改密码
-     */
-    void updateUserPasswordById(Long userId,String newPassword);
-    /**
-     * 根据用户id修改年龄
-     */
-    void updateUserAgeById(Long userId,String newUserAge);
 }

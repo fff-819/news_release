@@ -1,11 +1,9 @@
 package com.uml.controller;
 
+import com.uml.pojo.Result;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -13,6 +11,7 @@ import java.io.IOException;
 
 @RestController
 @Api(tags = "工具接口")
+@CrossOrigin
 public class CommonController {
     @Value(("${web.upload-path}"))
     private String uploadPath;
@@ -23,8 +22,9 @@ public class CommonController {
      * @throws IOException
      */
     @PostMapping("/upload/{userId}")
-    public String upload(@RequestPart("file") MultipartFile file, @PathVariable Long userId) throws IOException {
+    public Result upload(@RequestPart("file") MultipartFile file, @PathVariable Long userId) throws IOException {
         String fileName = file.getOriginalFilename();  //获取文件原名
+        Result result = new Result();
         String userPath = userId.toString();    //用户id
         String visibleUri="/"+fileName;     //拼接访问图片的地址
         String saveUri=uploadPath+"\\"+userPath+"\\"+fileName;        //拼接保存图片的真实地址
@@ -39,6 +39,8 @@ public class CommonController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return visibleUri;
+        result.setFlag(true);
+        result.setData(visibleUri);
+        return result;
     }
 }

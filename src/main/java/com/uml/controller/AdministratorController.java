@@ -290,6 +290,23 @@ public class AdministratorController {
         result.setData(userList);
         return result;
     }
+    /**
+     * 禁言一个用户
+     */
+    @ApiOperation("禁言用户")
+    @PutMapping("/users/ban/{userId}")
+    public Result banUser(@PathVariable Long userId){
+        Result result = new Result();
+        User user = userService.getById(userId);
+        if(user.getCommentStatus()){
+            user.setCommentStatus(false);
+        }else{
+            user.setCommentStatus(true);
+        }
+        boolean flag = userService.updateById(user);
+        result.setFlag(flag);
+        return result;
+    }
 
     /**
      * 评论管理功能
@@ -301,7 +318,6 @@ public class AdministratorController {
     @DeleteMapping("/comments/{commentId}")
     public Result deleteComment(@PathVariable Long commentId){
         System.out.println("删除一个评论:"+commentId);
-
         Result result = new Result(false);
         boolean flag = commentService.removeById(commentId);
         if (!flag){
@@ -323,5 +339,13 @@ public class AdministratorController {
         result.setData(commentList);
         return result;
     }
-
+    @ApiOperation("获取所有评论")
+    @GetMapping("/comments")
+    public Result getAllComment(){
+        Result result = new Result(false);
+        List<Comment> allComment = commentService.getAllComment();
+        result.setFlag(true);
+        result.setData(allComment);
+        return result;
+    }
 }

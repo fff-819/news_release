@@ -27,24 +27,23 @@ public class UserServiceImp extends ServiceImpl<UserMapper, User> implements Use
     }
 
     @Override
-    public Result loginCheck(User user , HttpServletResponse response){
-        User user1 = getUserByName(user.getUserName());
-        if(user1 == null ){
+    public Result loginCheck(Long account, String password,HttpServletResponse response){
+        User user = userMapper.selectById(account);
+        if(user == null ){
             //response.sendRedirect("/login");
             return new Result(false,null,"用户不存在") ;
         }
-        if(!user1.getPassword().equals(user.getPassword())){
+        if(!user.getPassword().equals(password)){
             return new Result(false,null,"密码输入错误");
         }
-        String token = tokenUtil.generateToken(user1) ;
+        String token = tokenUtil.generateToken(user) ;
         System.out.println("token:" + token);
         Cookie cookie = new Cookie("token" , token) ;
         // 设置cookie的作用域：为”/“时，以在webapp文件夹下的所有应用共享cookie
         cookie.setPath("/");
         response.addCookie(cookie);
         System.out.println("cookie:"+cookie);
-        return new Result(true,null,"用户登录成功");
-
+        return new Result(true,token,"用户登录成功");
     }
 
     @Override

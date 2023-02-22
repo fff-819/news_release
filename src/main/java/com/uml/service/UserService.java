@@ -16,7 +16,7 @@ public interface UserService extends IService<User> {
      * 用户登录验证
      *
      */
-    Result loginCheck(User user ,HttpServletResponse response);
+    Result loginCheck(Long account , String password,HttpServletResponse response);
     /**
      * 根据姓名查询用户
      */

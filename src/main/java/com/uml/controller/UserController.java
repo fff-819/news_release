@@ -48,8 +48,7 @@ public class UserController {
         System.out.println("用户登录");
         System.out.println("account:"+account+"  password:"+password);
         Result result = null;
-        User user = userService.getById(Long.valueOf(account));
-        result = userService.loginCheck(user, response);
+        result = userService.loginCheck(Long.getLong(account),password, response);
         return result;
     }
     /**
@@ -64,6 +63,16 @@ public class UserController {
         if(!userService.save(user)) {
             result.setFlag(false);
         }
+        return result;
+    }
+    /**
+     * 获取该用户是否收藏过该文章
+     */
+    @GetMapping("collection/{userId}/{newsId}")
+    public Result getCollectIs(@PathVariable Long userId,@PathVariable Long newsId){
+        Result result = new Result();
+        Boolean flag = userCollectionService.selectCollectByUserIdAndNewsId(userId, newsId);
+        result.setFlag(flag);
         return result;
     }
     /**
@@ -107,7 +116,6 @@ public class UserController {
     @GetMapping("news/{categoryName}/{page}")
     public Result scanNewsBynewsName(@PathVariable String categoryName,@PathVariable Integer page){
         System.out.println("category:"+categoryName+" ,page:"+page);
-
         Result result = new Result();
         //构造新闻列表
         IPage pages = null;
@@ -175,13 +183,20 @@ public class UserController {
      * 发布评论,参数：新闻id，用户id，父评论id，评论内容
      */
     @ApiOperation("发布评论")
-    @PostMapping("/news/comments")
-    public Result releaseComment(@RequestBody Comment comment){
+    @PostMapping("/news/comments/{userId}")
+    public Result releaseComment(@RequestBody Comment comment,@PathVariable Long userId){
         System.out.println(comment);
         System.out.println("发布评论");
         Result result = new Result();
-        boolean flag = commentService.save(comment);
-        result.setFlag(flag);
+        User user = userService.getById(userId);
+        //commentStatus为false代表未被禁言，true代表被禁言
+        if (!user.getCommentStatus()){
+            boolean flag = commentService.save(comment);
+            result.setFlag(flag);
+            return result;
+        }
+        result.setFlag(false);
+        result.setMsg("用户已被禁言");
         return result;
     }
     /**
@@ -281,7 +296,7 @@ public class UserController {
      * 查看浏览过的文章
      */
     @ApiOperation("查看浏览过的文章")
-    @GetMapping("/personal/news/{userId}}")
+    @GetMapping("/personal/news/{userId}")
     public Result viewBrowsedNews(@PathVariable Long userId){
         System.out.println("userId:"+userId);
         System.out.println("查看浏览过的文章");
